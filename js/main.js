@@ -28,6 +28,38 @@ while (continuar) {
   } else {
     const medida = parseFloat(medidaIngresada);
     const tallaCasco = medidasCascos(medida);
+
+    let casco = {
+      talla: tallaCasco,
+      modelo: "",
+      color: ""
+    };
+
+    if (tallaCasco === "XS") {
+      casco.modelo = "AGV 1";
+      casco.color = "Verde/Negro";
+    } else if (tallaCasco === "L") {
+      casco.modelo = "KYT";
+      casco.color = "Celeste/Blanco";
+    } else if (tallaCasco === "XL") {
+      casco.modelo = "AGV V3";
+      casco.color = "Rojo/Naranja";
+    }
+
+    function mostrarDetallesCasco(casco) {
+      console.log("Talla: " + casco.talla);
+      console.log("Modelo: " + casco.modelo);
+      console.log("Color: " + casco.color);
+    }
+
+    mostrarDetallesCasco(casco);
+
+    let medidasCasco = [];
+
+    medidasCasco.push(medida);
+
+    console.log(medidasCasco);
+
     alert("La talla del casco es: " + tallaCasco);
   }
 }
