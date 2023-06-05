@@ -38,6 +38,12 @@ while (continuar) {
     if (tallaCasco === "XS") {
       casco.modelo = "AGV 1";
       casco.color = "Verde/Negro";
+    } else if (tallaCasco === "S") {
+      casco.modelo = "SHAFT";
+      casco.color = "Plomo/Figuras";
+    } else if (tallaCasco === "M") {
+      casco.modelo = "Corsa";
+      casco.color = "Rojo Claro/ Lineas Grises";
     } else if (tallaCasco === "L") {
       casco.modelo = "KYT";
       casco.color = "Celeste/Blanco";
