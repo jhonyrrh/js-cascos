@@ -1,6 +1,17 @@
-alert("Medir con un centímetro la circunferencia de tu cabeza y añadirla en la siguiente casilla para saber su talla");
+let calcularBtn = document.getElementById("calcularBtn");
+let comprarBtn = document.getElementById("comprarBtn");
+let carrito = [];
 
-const medidasCascos = (medida) => {
+calcularBtn.addEventListener("click", function() {
+  calcularTallaCasco();
+});
+
+comprarBtn.addEventListener("click", function() {
+  agregarAlCarrito();
+  cerrarModal();
+});
+
+function medidasCascos(medida) {
   if (medida >= 53 && medida <= 54) {
     return "XS";
   } else if (medida >= 55 && medida <= 56) {
@@ -16,56 +27,109 @@ const medidasCascos = (medida) => {
   } else {
     return "Talla no encontrada";
   }
-};
+}
 
-let continuar = true;
+function mostrarDetallesCasco(tallaCasco) {
+  let casco = {
+    talla: tallaCasco,
+    modelo: "",
+    color: ""
+  };
 
-while (continuar) {
-  const medidaIngresada = prompt("Ingresa la medida en centímetros de la circunferencia de tu cabeza (escribe 'cabezon' para salir):");
-
-  if (medidaIngresada.toLowerCase() === "cabezon") {
-    continuar = false;
-  } else {
-    const medida = parseFloat(medidaIngresada);
-    const tallaCasco = medidasCascos(medida);
-
-    let casco = {
-      talla: tallaCasco,
-      modelo: "",
-      color: ""
-    };
-
-    if (tallaCasco === "XS") {
-      casco.modelo = "AGV 1";
-      casco.color = "Verde/Negro";
-    } else if (tallaCasco === "S") {
-      casco.modelo = "SHAFT";
-      casco.color = "Plomo/Figuras";
-    } else if (tallaCasco === "M") {
-      casco.modelo = "Corsa";
-      casco.color = "Rojo Claro/ Lineas Grises";
-    } else if (tallaCasco === "L") {
-      casco.modelo = "KYT";
-      casco.color = "Celeste/Blanco";
-    } else if (tallaCasco === "XL") {
-      casco.modelo = "AGV V3";
-      casco.color = "Rojo/Naranja";
-    }
-
-    function mostrarDetallesCasco(casco) {
-      console.log("Talla: " + casco.talla);
-      console.log("Modelo: " + casco.modelo);
-      console.log("Color: " + casco.color);
-    }
-
-    mostrarDetallesCasco(casco);
-
-    let medidasCasco = [];
-
-    medidasCasco.push(medida);
-
-    console.log(medidasCasco);
-
-    alert("La talla del casco es: " + tallaCasco);
+  if (tallaCasco === "XS") {
+    casco.modelo = "AGV 1";
+    casco.color = "Verde/Negro";
+  } else if (tallaCasco === "S") {
+    casco.modelo = "SHAFT";
+    casco.color = "Plomo/Figuras";
+  } else if (tallaCasco === "M") {
+    casco.modelo = "Corsa";
+    casco.color = "Rojo Claro/ Lineas Grises";
+  } else if (tallaCasco === "L") {
+    casco.modelo = "KYT";
+    casco.color = "Celeste/Blanco";
+  } else if (tallaCasco === "XL") {
+    casco.modelo = "AGV V3";
+    casco.color = "Rojo/Naranja";
   }
+
+  let resultado = document.getElementById("resultado");
+  resultado.innerHTML = `
+    <p>Talla: ${casco.talla}</p>
+    <p>Modelo: ${casco.modelo}</p>
+    <p>Color: ${casco.color}</p>
+  `;
+}
+
+function mostrarAlerta(mensaje) {
+  let resultado = document.getElementById("resultado");
+  resultado.innerHTML = `<p>${mensaje}</p>`;
+}
+
+function calcularTallaCasco() {
+  let medidaInput = document.getElementById("medidaInput").value;
+  let medida = parseFloat(medidaInput);
+
+  if (isNaN(medida)) {
+    mostrarAlerta("Por favor, ingresa una medida válida.");
+    return;
+  }
+
+  let tallaCasco = medidasCascos(medida);
+
+  if (tallaCasco === "Talla no encontrada") {
+    mostrarAlerta("La talla del casco no tiene resultados");
+  } else {
+    mostrarDetallesCasco(tallaCasco);
+  }
+}
+
+function agregarAlCarrito() {
+  let talla = document.getElementById("resultado").querySelector("p:first-child").textContent.split(":")[1].trim();
+  let modelo = document.getElementById("resultado").querySelector("p:nth-child(2)").textContent.split(":")[1].trim();
+  let color = document.getElementById("resultado").querySelector("p:nth-child(3)").textContent.split(":")[1].trim();
+
+  let producto = {
+    talla: talla,
+    modelo: modelo,
+    color: color
+  };
+
+  carrito.push(producto);
+
+  mostrarMensajeCarrito("El producto se ha agregado al carrito.");
+  actualizarCarrito();
+}
+
+function mostrarMensajeCarrito(mensaje) {
+  let mensajeElement = document.createElement("div");
+  mensajeElement.classList.add("alert", "alert-success");
+  mensajeElement.textContent = mensaje;
+
+  let container = document.querySelector(".container");
+  container.insertBefore(mensajeElement, container.firstChild);
+
+  setTimeout(function() {
+    mensajeElement.remove();
+  }, 3000);
+}
+
+
+function actualizarCarrito() {
+  let carritoElement = document.getElementById("carrito");
+  carritoElement.innerHTML = "";
+
+
+  carrito.forEach(function(producto) {
+    let productoElement = document.createElement("li");
+    productoElement.classList.add("list-group-item");
+    productoElement.textContent = `Talla: ${producto.talla} | Modelo: ${producto.modelo} | Color: ${producto.color}`;
+
+    carritoElement.appendChild(productoElement);
+  });
+}
+function cerrarModal() {
+  let modal = document.getElementById("resultadoModal");
+  let bootstrapModal = bootstrap.Modal.getInstance(modal);
+  bootstrapModal.hide();
 }
