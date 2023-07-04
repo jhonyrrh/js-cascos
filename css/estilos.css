@@ -1,0 +1,4 @@
+.carrito-imagen img {
+    width: 50px; /* Cambia el valor según el tamaño que desees */
+    height: auto; /* Ajusta automáticamente la altura proporcionalmente */
+  }

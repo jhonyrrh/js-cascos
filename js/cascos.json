@@ -1,0 +1,38 @@
+[
+    {
+      "talla": "XS",
+      "modelo": "AGV 1",
+      "color": "Verde/Negro",
+      "precio": 100,
+      "foto": "https://cdn.shopify.com/s/files/1/0532/7254/3382/products/AGVK1GOTHIC46_300x300.jpg?v=1612753790"
+    },
+    {
+      "talla": "S",
+      "modelo": "SHAFT",
+      "color": "Plomo/Figuras",
+      "precio": 120,
+      "foto": "https://www.puntollantas.com/wp-content/uploads/2023/04/0005_SHAFT-225-PILOT.FIGHTER.GR_.M.RJ_.VISOR-SL.jpg"
+    },
+    {
+      "talla": "M",
+      "modelo": "AGV",
+      "color": "Rojo Claro/ Lineas Grises",
+      "precio": 150,
+      "foto": "https://www.puntomotos.es/10840/casco-agv-k-5-s-firerace-con-pinlock-negro-rojo.jpg"
+    },
+    {
+      "talla": "L",
+      "modelo": "KYT",
+      "color": "Celeste/Blanco",
+      "precio": 200,
+      "foto": "https://cdn.shopify.com/s/files/1/0532/7254/3382/products/TT-COURSEDALLAPORTA-1_1024x1024@2x.jpg?v=1620743343"
+    },
+    {
+      "talla": "XL",
+      "modelo": "AGV V3",
+      "color": "Negro/Celeste",
+      "precio": 250,
+      "foto": "https://images.motocard.com/eyJidWNrZXQiOiJtb3RvY2FyZCIsImtleSI6InByb2R1Y3RzXC9pbWFnZXNcLzIwMDAyXC9hZ3YtazZfbWFyaW5pX3JlcGxpY2Ffc2t5X3JhY2luZ190ZWFtXzIwMjEtNS1NLTIwMDAyOTc5MTM0LmpwZWciLCJlZGl0cyI6eyJ3ZWJwIjp7InF1YWxpdHkiOjg1fSwianBlZyI6eyJxdWFsaXR5Ijo5MX0sInJlc2l6ZSI6eyJ3aWR0aCI6NTUwLCJoZWlnaHQiOjU1MCwiZml0IjoiY292ZXIifX0sInYiOiJkMjlkYjcwOTA1NmMxMDVmNGVmNTYzYTFjMTlhMzEzZCJ9"
+    }
+  ]
+  

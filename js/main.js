@@ -1,6 +1,21 @@
+window.addEventListener('DOMContentLoaded', function() {
+  if (localStorage.getItem('carrito')) {
+    carrito = JSON.parse(localStorage.getItem('carrito'));
+    actualizarCarrito();
+  }
+});
+
+let carritoElement = document.getElementById('carrito');
+let eliminarTodoContainer = document.createElement('div');
+eliminarTodoContainer.classList.add('d-flex', 'justify-content-end', 'mt-3');
+let eliminarTodoBtn = document.createElement('button');
+eliminarTodoBtn.classList.add('btn', 'btn-danger');
+eliminarTodoBtn.textContent = 'Vaciar Carrito';
+
 let calcularBtn = document.getElementById("calcularBtn");
 let comprarBtn = document.getElementById("comprarBtn");
 let carrito = [];
+
 
 calcularBtn.addEventListener("click", function() {
   calcularTallaCasco();
@@ -9,6 +24,10 @@ calcularBtn.addEventListener("click", function() {
 comprarBtn.addEventListener("click", function() {
   agregarAlCarrito();
   cerrarModal();
+});
+
+eliminarTodoBtn.addEventListener('click', function() {
+  vaciarCarrito();
 });
 
 function medidasCascos(medida) {
@@ -30,36 +49,28 @@ function medidasCascos(medida) {
 }
 
 function mostrarDetallesCasco(tallaCasco) {
-  let casco = {
-    talla: tallaCasco,
-    modelo: "",
-    color: ""
-  };
+  fetch("./js/cascos.json")
+    .then(response => response.json())
+    .then(cascos => {
+      const casco = cascos.find(c => c.talla === tallaCasco);
 
-  if (tallaCasco === "XS") {
-    casco.modelo = "AGV 1";
-    casco.color = "Verde/Negro";
-  } else if (tallaCasco === "S") {
-    casco.modelo = "SHAFT";
-    casco.color = "Plomo/Figuras";
-  } else if (tallaCasco === "M") {
-    casco.modelo = "Corsa";
-    casco.color = "Rojo Claro/ Lineas Grises";
-  } else if (tallaCasco === "L") {
-    casco.modelo = "KYT";
-    casco.color = "Celeste/Blanco";
-  } else if (tallaCasco === "XL") {
-    casco.modelo = "AGV V3";
-    casco.color = "Rojo/Naranja";
-  }
-
-  let resultado = document.getElementById("resultado");
-  resultado.innerHTML = `
-    <p>Talla: ${casco.talla}</p>
-    <p>Modelo: ${casco.modelo}</p>
-    <p>Color: ${casco.color}</p>
-  `;
+      if (casco) {
+        document.getElementById("resultado").innerHTML = `
+        <p>Talla: ${casco.talla}</p>
+              <p>Modelo: ${casco.modelo}</p>
+              <p>Color: ${casco.color}</p>
+              <p>Precio: $${casco.precio}</p>
+              <img src="${casco.foto}" alt="Foto del casco" style="max-width: 100%; height: auto;">
+        `;
+      } else {
+        document.getElementById("resultado").innerHTML = "No se encontró el casco con la talla especificada.";
+      }
+    })
+    .catch(error => {
+      console.error("Error al cargar los datos de los cascos:", error);
+    });
 }
+
 
 function mostrarAlerta(mensaje) {
   let resultado = document.getElementById("resultado");
@@ -85,21 +96,35 @@ function calcularTallaCasco() {
 }
 
 function agregarAlCarrito() {
-  let talla = document.getElementById("resultado").querySelector("p:first-child").textContent.split(":")[1].trim();
+  let talla = document.getElementById("resultado").querySelector("p:nth-child(1)").textContent.split(":")[1].trim();
   let modelo = document.getElementById("resultado").querySelector("p:nth-child(2)").textContent.split(":")[1].trim();
   let color = document.getElementById("resultado").querySelector("p:nth-child(3)").textContent.split(":")[1].trim();
+  let precio = parseFloat(document.getElementById("resultado").querySelector("p:nth-child(4)").textContent.split(":")[1].trim().slice(1));
+  let foto = document.getElementById("resultado").querySelector("img").src;
 
-  let producto = {
-    talla: talla,
-    modelo: modelo,
-    color: color
-  };
+  let productoExistente = carrito.find(function(producto) {
+    return producto.talla === talla && producto.modelo === modelo && producto.color === color;
+  });
 
-  carrito.push(producto);
+  if (productoExistente) {
+    productoExistente.cantidad += 1;
+  } else {
+    let producto = {
+      talla: talla,
+      modelo: modelo,
+      color: color,
+      cantidad: 1,
+      precio: precio,
+      foto: foto
+    };
+
+    carrito.push(producto);
+  }
 
   mostrarMensajeCarrito("El producto se ha agregado al carrito.");
   actualizarCarrito();
 }
+
 
 function mostrarMensajeCarrito(mensaje) {
   let mensajeElement = document.createElement("div");
@@ -113,23 +138,86 @@ function mostrarMensajeCarrito(mensaje) {
     mensajeElement.remove();
   }, 3000);
 }
-
-
 function actualizarCarrito() {
-  let carritoElement = document.getElementById("carrito");
-  carritoElement.innerHTML = "";
+  
+  let precioTotal = 0;
+  carritoElement.innerHTML = '';
+  carrito.forEach(function(producto, index) {
+    let productoElement = document.createElement('li');
+    productoElement.classList.add('list-group-item');
+    productoElement.innerHTML = `
+      <div class="producto-info">
+        <p>Talla: ${producto.talla} | Modelo: ${producto.modelo} | Color: ${producto.color} | Cantidad: ${producto.cantidad} | Precio Und: $${producto.precio}</p>
+      </div>
+      <div class="producto-imagen carrito-imagen">
+        <img src="${producto.foto}" alt="Foto del casco">
+      </div>
+    `;
+  precioTotal += producto.precio * producto.cantidad;
 
+    // Botón "+" para sumar cantidad
+    let sumarBtn = document.createElement('button');
+    sumarBtn.classList.add('btn', 'btn-outline-secondary', 'btn-sm', 'float-end', 'mx-1');
+    sumarBtn.textContent = '+';
+    sumarBtn.addEventListener('click', function() {
+      incrementarCantidad(index);
+    });
 
-  carrito.forEach(function(producto) {
-    let productoElement = document.createElement("li");
-    productoElement.classList.add("list-group-item");
-    productoElement.textContent = `Talla: ${producto.talla} | Modelo: ${producto.modelo} | Color: ${producto.color}`;
+    // Botón "-" para restar cantidad
+    let restarBtn = document.createElement('button');
+    restarBtn.classList.add('btn', 'btn-outline-secondary', 'btn-sm', 'float-end', 'mx-1');
+    restarBtn.textContent = '-';
+    restarBtn.addEventListener('click', function() {
+      decrementarCantidad(index);
+    });
 
+    productoElement.appendChild(sumarBtn);
+    productoElement.appendChild(restarBtn);
+
+    let eliminarBtn = document.createElement('button');
+    eliminarBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'float-end');
+    eliminarBtn.innerHTML = '&times;';
+    eliminarBtn.addEventListener('click', function() {
+      eliminarProducto(index);
+    });
+
+    productoElement.appendChild(eliminarBtn);
     carritoElement.appendChild(productoElement);
   });
+  let precioTotalElement = document.createElement('p');
+  precioTotalElement.innerHTML = `<strong>Total: $${precioTotal.toFixed(2)}</strong>`;
+  carritoElement.appendChild(precioTotalElement);
+
+  eliminarTodoContainer.appendChild(eliminarTodoBtn);
+  carritoElement.appendChild(eliminarTodoContainer);
+
+  localStorage.setItem('carrito', JSON.stringify(carrito));
 }
+
+function eliminarProducto(index) {
+  carrito.splice(index, 1);
+  actualizarCarrito();
+}
+
 function cerrarModal() {
   let modal = document.getElementById("resultadoModal");
   let bootstrapModal = bootstrap.Modal.getInstance(modal);
   bootstrapModal.hide();
+}
+
+function vaciarCarrito() {
+  carrito = [];
+  actualizarCarrito();
+}
+
+function incrementarCantidad(index) {
+  carrito[index].cantidad += 1;
+  actualizarCarrito();
+}
+
+function decrementarCantidad(index) {
+  if (carrito[index].cantidad > 1) {
+    carrito[index].cantidad -= 1;
+    actualizarCarrito();
+  }
 }
