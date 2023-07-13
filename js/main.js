@@ -56,14 +56,17 @@ function mostrarDetallesCasco(tallaCasco) {
 
       if (casco) {
         document.getElementById("resultado").innerHTML = `
-        <p>Talla: ${casco.talla}</p>
-              <p>Modelo: ${casco.modelo}</p>
-              <p>Color: ${casco.color}</p>
-              <p>Precio: $${casco.precio}</p>
-              <img src="${casco.foto}" alt="Foto del casco" style="max-width: 100%; height: auto;">
+          <p>Talla: ${casco.talla}</p>
+          <p>Modelo: ${casco.modelo}</p>
+          <p>Color: ${casco.color}</p>
+          <p>Precio: $${casco.precio}</p>
+          <img src="${casco.foto}" alt="Foto del casco" style="max-width: 100%; height: auto;">
         `;
+
+        let comprarBtn = document.getElementById("comprarBtn");
+        comprarBtn.style.display = "block";
       } else {
-        document.getElementById("resultado").innerHTML = "No se encontró el casco con la talla especificada.";
+        mostrarAlerta("La talla del casco no tiene resultados");
       }
     })
     .catch(error => {
@@ -75,6 +78,18 @@ function mostrarDetallesCasco(tallaCasco) {
 function mostrarAlerta(mensaje) {
   let resultado = document.getElementById("resultado");
   resultado.innerHTML = `<p>${mensaje}</p>`;
+  
+  let comprarBtn = document.getElementById("comprarBtn");
+  comprarBtn.style.display = "none";
+
+  let buscarBtn = document.createElement("button");
+  buscarBtn.classList.add("btn", "btn-danger");
+  buscarBtn.textContent = "Buscar nuevamente";
+  buscarBtn.addEventListener("click", function() {
+    cerrarModal();
+  });
+
+  resultado.appendChild(buscarBtn);
 }
 
 function calcularTallaCasco() {
